@@ -1,0 +1,45 @@
+#*******************************************************************************
+# 
+#   check-sentry-action:  github action to check whether a sentry corresponding
+#                         to the current commit has been set up in this repo.
+#                         The sentry is a build artifact created by the
+#                         set-sentry-action and is identified by the commit SHA.
+#
+#   Outputs: release_not_built which is true if sentry not found, false otherwise
+#
+# 
+#   2022-02-02 Frank Halasz
+# 
+# 
+#   Copyright: 2022 by Interlisp.org 
+# 
+#
+# *****************************************************************************/
+name: 'Check build sentry'
+description: 'Check for the sentry that indicates that a build with the current commit has already been completed'
+inputs:
+  workflow:
+    description: "the workflow using the sentry"
+    required: true
+outputs:
+  release_not_built:
+    description: "Set to 'true' is a release with this commit has not been built"
+    value: ${{ steps.output.outputs.release_not_built }}
+runs:
+  using: "composite"
+  steps:
+    - id: get_sentry
+      uses: dawidd6/action-download-artifact@v2.16.0
+      with:
+        workflow: ${{ inputs.workflow }}
+        search_artifacts: true
+        name: sentry-${{ github.sha }}
+        path: ../sentry
+    - id: output
+      if: ${{ always() }}
+      run: >
+        if [ -e ../sentry ]; 
+        then echo ::set-output name=release_not_built::false;
+        else echo ::set-output name=release_not_built::true;
+        fi
+      shell: bash
