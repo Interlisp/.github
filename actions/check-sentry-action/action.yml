@@ -39,7 +39,8 @@ runs:
                  2>/dev/null \
               | grep '"name":' | grep -q "sentry-${{ inputs.tag }}-${{ github.sha }}"  
           if [ $? -eq 0 ]; 
-           then echo ::set-output name=release_not_built::false;
-           else echo ::set-output name=release_not_built::true;
+           then echo ::set-output name=release_not_built::false; echo "Release built";
+           else echo ::set-output name=release_not_built::true; echo "Release NOT built";
           fi
+          exit 0
       shell: bash
