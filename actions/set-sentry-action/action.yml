@@ -1,0 +1,30 @@
+#*******************************************************************************
+# 
+#   set-sentry-action:  github action to set a sentry that indicates a build
+#                       based on the current commit has been completed
+#                       successfully.  Sentry is a file with commit SHA
+#                       uploaded as an artifact in the current repo.
+#
+#   No outputs.
+# 
+#   2022-02-02 Frank Halasz
+# 
+# 
+#   Copyright: 2022 by Interlisp.org 
+# 
+#
+# *****************************************************************************/
+name: 'Set build sentry'
+description: 'Set the sentry that indicates that a build with the current commit has already been completed'
+runs:
+  using: "composite"
+  steps:
+    - id: file
+      run: echo ::set-output name=file::"$(cd ${{ github.workspace }} && cd .. && pwd)/sentry"
+      shell: bash
+    - run: echo ${{ github.sha }} > ${{ steps.file.outputs.file }}
+      shell: bash
+    - uses: actions/upload-artifact@v2
+      with:
+        name: sentry-${{ github.sha }}
+        path: ${{ steps.file.outputs.file }}
