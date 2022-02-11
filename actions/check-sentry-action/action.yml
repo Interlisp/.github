@@ -18,28 +18,28 @@
 name: 'Check build sentry'
 description: 'Check for the sentry that indicates that a build with the current commit has already been completed'
 inputs:
-  workflow:
-    description: "the workflow using the sentry"
-    required: true
+  tag:
+    description: "tag that can distinguish this sentry from other sentries in same workflow"
+    required: false
+    default: "untagged"
 outputs:
   release_not_built:
     description: "Set to 'true' is a release with this commit has not been built"
-    value: ${{ steps.output.outputs.release_not_built }}
+    value: ${{ steps.sentry.outputs.release_not_built }}
 runs:
   using: "composite"
   steps:
-    - id: get_sentry
-      uses: dawidd6/action-download-artifact@v2.16.0
-      with:
-        workflow: ${{ inputs.workflow }}
-        search_artifacts: true
-        name: sentry-${{ github.sha }}
-        path: ../sentry
-    - id: output
-      if: ${{ always() }}
-      run: >
-        if [ -e ../sentry ]; 
-        then echo ::set-output name=release_not_built::false;
-        else echo ::set-output name=release_not_built::true;
-        fi
+    - id: sentry
+      run: |
+          set +e
+          REPO="${{ github.repository }}"
+          REPO="${REPO#*/}"
+          curl -H "Accept: application/vnd.github.v3+json" \
+                 https://api.github.com/repos/${{ github.repository_owner }}/${REPO}/actions/artifacts \
+                 2>/dev/null \
+              | grep '"name":' | grep -q "sentry-${{ inputs.tag }}-${{ github.sha }}"  
+          if [ $? -eq 0 ]; 
+           then echo ::set-output name=release_not_built::false;
+           else echo ::set-output name=release_not_built::true;
+          fi
       shell: bash
