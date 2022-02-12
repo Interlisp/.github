@@ -16,6 +16,11 @@
 # *****************************************************************************/
 name: 'Set build sentry'
 description: 'Set the sentry that indicates that a build with the current commit has already been completed'
+inputs:
+  tag:
+    description: "tag that can distinguish this sentry from other sentries in same workflow"
+    required: false
+    default: "untagged"
 runs:
   using: "composite"
   steps:
@@ -26,5 +31,5 @@ runs:
       shell: bash
     - uses: actions/upload-artifact@v2
       with:
-        name: sentry-${{ github.sha }}
+        name: sentry-${{ inputs.tag }}-${{ github.sha }}
         path: ${{ steps.file.outputs.file }}
