@@ -25,7 +25,7 @@ runs:
   using: "composite"
   steps:
     - id: file
-      run: echo ::set-output name=file::"$(cd ${{ github.workspace }} && cd .. && pwd)/sentry"
+      run: echo "file=$(cd ${{ github.workspace }} && cd .. && pwd)/sentry" >> ${GITHUB_OUTPUT}
       shell: bash
     - run: echo ${{ github.sha }} > ${{ steps.file.outputs.file }}
       shell: bash
