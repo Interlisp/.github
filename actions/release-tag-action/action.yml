@@ -33,9 +33,10 @@ runs:
   steps:
     - id: only
       run: |
+        if [ -z ${INPUT_PATH} ]; then export INPUT_PATH="."; fi
         REPO_NAME=${GITHUB_REPOSITORY#*/}
         COMMIT_SHORTREF=${GITHUB_SHA::8}
-        COMMIT_DATE=$(git show -s --date=format:'%y%m%d' --format=%cd ${GITHUB_SHA})
+        COMMIT_DATE=$(cd ${INPUT_PATH}; git show -s --date=format:'%y%m%d' --format=%cd ${GITHUB_SHA})
         RELEASE_TAG=${REPO_NAME}-${COMMIT_DATE}-${COMMIT_SHORTREF}
         #
         echo "RELEASE_TAG=${RELEASE_TAG}" >> ${GITHUB_ENV} 
