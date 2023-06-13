@@ -21,6 +21,11 @@
 # *****************************************************************************/
 name: 'Set release tag'
 description: 'Compute tag for this release set environment variables accordingly'
+inputs:
+  path:
+    description: 'Location of maiko/medley repo relative to workspace'
+    required: false
+    default: '.'
 outputs:
   release_tag:
     description: 'Tag to be used for this release based on latest commit date and shortref'
@@ -33,7 +38,6 @@ runs:
   steps:
     - id: only
       run: |
-        if [ -z ${INPUT_PATH} ]; then export INPUT_PATH="."; fi
         REPO_NAME=${GITHUB_REPOSITORY#*/}
         COMMIT_SHORTREF=${GITHUB_SHA::8}
         COMMIT_DATE=$(cd ${INPUT_PATH}; git show -s --date=format:'%y%m%d' --format=%cd ${GITHUB_SHA})
