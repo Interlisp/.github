@@ -43,7 +43,7 @@ runs:
         COMMIT_DATE=$(cd ${{ inputs.path }}; git show -s --date=format:'%y%m%d' --format=%cd ${GITHUB_SHA})
         RELEASE_TAG=${REPO_NAME}-${COMMIT_DATE}-${COMMIT_SHORTREF}
         #
-        echo "RELEASE_TAG=${RELEASE_TAG}" >> ${GITHUB_ENV} 
+        echo "RELEASE_TAG=${RELEASE_TAG}" >> ${GITHUB_ENV}
         echo "release_tag=${RELEASE_TAG}" >> ${GITHUB_OUTPUT}
         echo "REPO_NAME=${REPO_NAME}" >> ${GITHUB_ENV}
         echo "repo_name=${REPO_NAME}" >> ${GITHUB_OUTPUT}

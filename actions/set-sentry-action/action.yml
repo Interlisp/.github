@@ -29,7 +29,7 @@ runs:
       shell: bash
     - run: echo ${{ github.sha }} > ${{ steps.file.outputs.file }}
       shell: bash
-    - uses: actions/upload-artifact@v3
+    - uses: actions/upload-artifact@v4
       with:
         name: sentry-${{ inputs.tag }}-${{ github.sha }}
         path: ${{ steps.file.outputs.file }}
